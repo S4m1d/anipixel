@@ -68,15 +68,22 @@ pxconv_pick_ssd1306_frame_from_sprites(PngutilImage *sprites_img, int start_x,
 }
 
 PxconvError pxconv_spritesheet_to_ssd1306(PngutilImage *img, cJSON *meta,
-                                          uint8_t **animation_bytes) {
+                                          uint8_t **animation_bytes,
+                                          int *animation_size) {
   cJSON *frames = cJSON_GetObjectItem(meta, "frames");
   int frames_count = cJSON_GetArraySize(frames);
-  uint8_t *buf = malloc((sizeof(int) + 1024 * sizeof(uint8_t)) * frames_count);
+  // Animation binary format frames_count=4B -> Nx(duration=4B -> frame=1kB)
+  *animation_size =
+      sizeof(int) + (sizeof(int) + 1024 * sizeof(uint8_t)) * frames_count;
+
+  uint8_t *buf = malloc(*animation_size);
   if (!buf) {
     fprintf(stderr,
             "pxconv_spritesheet_to_ssd1306: failed to allocate buffer\n");
     return PXCONV_ERR;
   }
+
+  memcpy(buf, &frames_count, sizeof(int));
 
   for (int i = 0; i < frames_count; i++) {
     cJSON *params = cJSON_GetArrayItem(frames, i);
@@ -96,7 +103,7 @@ PxconvError pxconv_spritesheet_to_ssd1306(PngutilImage *img, cJSON *meta,
       return PXCONV_ERR;
     }
 
-    int offset = i * (sizeof(int) + 1024 * sizeof(uint8_t));
+    int offset = sizeof(int) + i * (sizeof(int) + 1024 * sizeof(uint8_t));
 
     int duration_ms = cJSON_GetObjectItem(params, "duration")->valueint;
     // writing duration of frame first

@@ -107,7 +107,8 @@ int spritesheet_to_ssd1306(char *t_value, char *d_value) {
   }
 
   uint8_t *animation_bytes;
-  pxconv_spritesheet_to_ssd1306(&sprites_png, meta, &animation_bytes);
+  int animation_size;
+  pxconv_spritesheet_to_ssd1306(&sprites_png, meta, &animation_bytes, &animation_size);
 
   // open file for write, if doesn't exist create one
   FILE *dest_file = fopen(d_value, "wb");
@@ -117,7 +118,10 @@ int spritesheet_to_ssd1306(char *t_value, char *d_value) {
     fprintf(stderr, "failed to open file %s for write\n", d_value);
     return 1;
   }
-  fwrite(animation_bytes, sizeof(animation_bytes), 1, dest_file);
+  fwrite(animation_bytes, sizeof(uint8_t), animation_size, dest_file);
+  fprintf(stdout, "successfully written animation binary into %s, size %dB\n", d_value, animation_size);
+
+  free(animation_bytes);
   fclose(dest_file);
 
   pngutil_free_image(&sprites_png);
