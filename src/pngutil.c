@@ -13,7 +13,7 @@ int pngutil_load_png(const char *path, PngutilImage *img) {
     if (!png_check_sig(sig, 8)) {
         fprintf(stderr, "Not a PNG file\n");
         fclose(fp);
-        return 0;
+        return 1;
     }
 
     png_structp png  = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -23,7 +23,7 @@ int pngutil_load_png(const char *path, PngutilImage *img) {
         fprintf(stderr, "Error reading PNG\n");
         png_destroy_read_struct(&png, &info, NULL);
         fclose(fp);
-        return 0;
+        return 1;
     }
 
     png_init_io(png, fp);
@@ -49,7 +49,7 @@ int pngutil_load_png(const char *path, PngutilImage *img) {
 
     png_destroy_read_struct(&png, &info, NULL);
     fclose(fp);
-    return 1;
+    return 0;
 }
 
 void pngutil_free_image(PngutilImage *img) {

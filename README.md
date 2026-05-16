@@ -12,7 +12,12 @@ make debug
 ```
 
 # Usage
-Convert png into a frame fitting ssd1306 screen
+Convert animation spreadsheet (sprites png + metadata-json) into ssd1306 animation (my own simple custom format)
 ```bash
-./release/anipixel -t assets/some_image.png -d assets/frame.bin
+./build/release/anipixel -m spritesheet_to_ssd1306 -t assets/ass-shoulder-dance -d assets/ass-shoulder-dance/animation.bin
+```
+
+Convert png into a frame fitting ssd1306 display
+```bash
+./release/anipixel -m png_to_ssd1306 -t assets/some_image.png -d assets/frame.bin
 ```

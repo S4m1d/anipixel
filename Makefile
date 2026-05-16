@@ -2,10 +2,10 @@ CC      = gcc
 TARGET  = anipixel
 
 CFLAGS  = -Wall -Wextra -O2 -Isrc $(shell pkg-config --cflags libpng)
-LDFLAGS = $(shell pkg-config --libs libpng)
+LDFLAGS = $(shell pkg-config --libs libpng libcjson)
 
 DEBUG_CFLAGS  = -Wall -Wextra -g -fsanitize=address -Isrc $(shell pkg-config --cflags libpng)
-DEBUG_LDFLAGS = $(shell pkg-config --libs libpng) -fsanitize=address
+DEBUG_LDFLAGS = $(shell pkg-config --libs libpng libcjson) -fsanitize=address
 
 SRC = $(wildcard src/*.c)
 OBJ       = $(patsubst src/%.c, build/release/%.o, $(SRC))
